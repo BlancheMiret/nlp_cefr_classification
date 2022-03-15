@@ -160,11 +160,11 @@ $ pip3 install -r requirements.txt
 
 7. **MULTI_LINGUAL.PY** : donc semble prédire aussi le code langue :  multi-lingual, multi-task learning (learning the language, and learning its CEFR). Avec des embeddings de mot ET caractères (concatène)
 
-   - Notes : :ok: 
+   - Notes : :ok: à l'exécution , mais score correspond pas
 
 8. multi_lingual_no_langfeat.py
 
-   - Notes: :ok: 
+   - Notes: :ok:  à l'exécution, mais score correspond pas
    
 8. `IDEA_POC.PY`
 
@@ -179,3 +179,208 @@ $ pip3 install -r requirements.txt
        ```
    
        - --> https://stackoverflow.com/questions/59439096/importerror-cannnot-import-name-imputer-from-sklearn-preprocessing, mais ne semble pas utilisé dans le code, toutes les lignes y faisant appel sont commentées
+   
+     - **L'extraction des domain features est problématique**
+   
+       - Pas de souci pour les expériences multilingues : pas d'extraction des domain features dans ce mode. En revanche, pour monolingue et crosslingue, on essaie d'extraire les fameuses "domain features" pour l'allemand et le tchèque. L'exécution semblait prendre un temps bien trop long. J'ai ajouté des messages pour comprendre ce qui prenait du temps :
+   
+       ```
+       ##### MONOLINGUAL MODELS - FEATURES: all - LANG : DE #####
+       In getScoringFeatures
+       1091_0000061_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 12.56604790687561 sec.
+       1061_0120426_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 13.215233564376831 sec.
+       1023_0109606_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 14.215504884719849 sec.
+       1091_0000055_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 15.186673879623413 sec.
+       1071_0248336_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 16.56483793258667 sec.
+       1071_0024763_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 18.431652307510376 sec.
+       1023_0108813_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 20.70341420173645 sec.
+       1071_0024757_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 21.737897157669067 sec.
+       1061_0120874_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 24.081716060638428 sec.
+       1071_0024685_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 25.613893032073975 sec.
+       1031_0003336_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 25.636111974716187 sec.
+       1031_0003141_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 27.713420152664185 sec.
+       1031_0003221_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 30.019333124160767 sec.
+       1061_0120359_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 32.025243043899536 sec.
+       1061_0120314_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 31.764833211898804 sec.
+       1091_0000140_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 31.3243248462677 sec.
+       1091_0000020_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 33.44585204124451 sec.
+       1061_0120494_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 34.87455105781555 sec.
+       1071_0024826_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 37.39989924430847 sec.
+       1091_0000263_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 38.28219485282898 sec.
+       1023_0101855_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 39.803815841674805 sec.
+       1071_0242043_DE_A1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 40.87883377075195 sec.
+       1071_0024689_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 41.463289737701416 sec.
+       1061_0120878_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 44.38386392593384 sec.
+       1023_0109891_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 46.22001004219055 sec.
+       1031_0003179_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 48.443629026412964 sec.
+       1091_0000016_DE_A1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 46.46049094200134 sec.
+       1023_0103836_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 49.38459920883179 sec.
+       1091_0000101_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 48.86769700050354 sec.
+       1091_0000022_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 50.10604381561279 sec.
+       1071_0024854_DE_A1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 54.113966941833496 sec.
+       1091_0000145_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 59.44367694854736 sec.
+       1071_0248305_DE_A1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 56.91392731666565 sec.
+       1061_0120368_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 56.52687692642212 sec.
+       1091_0000052_DE_A1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 58.56247115135193 sec.
+       1091_0000171_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 60.20961785316467 sec.
+       1023_0109026_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 61.17030715942383 sec.
+       1071_0024680_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 63.226845026016235 sec.
+       1031_0003144_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 64.27628374099731 sec.
+       1031_0003065_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 67.20675206184387 sec.
+       1031_0002187_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 66.89972186088562 sec.
+       1071_0024766_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 70.05838322639465 sec.
+       1071_0024862_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 69.85452389717102 sec.
+       1023_0101688_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 78.44429016113281 sec.
+       1091_0000064_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 79.59182786941528 sec.
+       1061_0120423_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 78.01323103904724 sec.
+       1091_0000213_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 78.91283583641052 sec.
+       1023_0109590_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 77.48634481430054 sec.
+       1071_0248307_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 76.97672176361084 sec.
+       1061_0120329_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 80.28094387054443 sec.
+       1023_0101846_DE_C1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 90.08925795555115 sec.
+       1071_0024815_DE_A1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 89.52038979530334 sec.
+       1061_0120350_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 87.06282496452332 sec.
+       1023_0101895_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 87.90472292900085 sec.
+       1071_0024799_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 88.89076590538025 sec.
+       1091_0000011_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 91.9248149394989 sec.
+       1091_0000266_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 96.71859002113342 sec.
+       1071_0024823_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 95.9616630077362 sec.
+       1061_0120271_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 95.42204093933105 sec.
+       1091_0000068_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 93.53404903411865 sec.
+       1061_0120491_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 95.40275025367737 sec.
+       1061_0120366_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 104.91603112220764 sec.
+       1091_0000025_DE_A2.txt.parsed.txt
+       Ignoring this text:  /Users/blanchemiret/Workspace/M2_Info/NLP_Ballier/Projet/nlp_cefr_classification/src/../data/DE-Parsed/1091_0000025_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 0.3613278865814209 sec.
+       1023_0109591_DE_B2.txt.parsed.txt
+       Ignoring this text:  /Users/blanchemiret/Workspace/M2_Info/NLP_Ballier/Projet/nlp_cefr_classification/src/../data/DE-Parsed/1023_0109591_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 0.3356332778930664 sec.
+       1061_0120326_DE_B1.txt.parsed.txt
+       Ignoring this text:  /Users/blanchemiret/Workspace/M2_Info/NLP_Ballier/Projet/nlp_cefr_classification/src/../data/DE-Parsed/1061_0120326_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 0.33597683906555176 sec.
+       1061_0120312_DE_A2.txt.parsed.txt
+       Ignoring this text:  /Users/blanchemiret/Workspace/M2_Info/NLP_Ballier/Projet/nlp_cefr_classification/src/../data/DE-Parsed/1061_0120312_DE_A2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 0.3209199905395508 sec.
+       1023_0101689_DE_B1.txt.parsed.txt
+       Ignoring this text:  /Users/blanchemiret/Workspace/M2_Info/NLP_Ballier/Projet/nlp_cefr_classification/src/../data/DE-Parsed/1023_0101689_DE_B1.txt.parsed.txt
+       Got getLexFeatures for ONE file in 0.3336319923400879 sec.
+       1031_0003173_DE_B2.txt.parsed.txt
+       Ignoring this text:  /Users/blanchemiret/Workspace/M2_Info/NLP_Ballier/Projet/nlp_cefr_classification/src/../data/DE-Parsed/1031_0003173_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 0.34200310707092285 sec.
+       1031_0002091_DE_B2.txt.parsed.txt
+       Ignoring this text:  /Users/blanchemiret/Workspace/M2_Info/NLP_Ballier/Projet/nlp_cefr_classification/src/../data/DE-Parsed/1031_0002091_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 1.7645833492279053 sec.
+       1031_0003052_DE_B2.txt.parsed.txt
+       Ignoring this text:  /Users/blanchemiret/Workspace/M2_Info/NLP_Ballier/Projet/nlp_cefr_classification/src/../data/DE-Parsed/1031_0003052_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 2.8318111896514893 sec.
+       1031_0003225_DE_B2.txt.parsed.txt
+       Ignoring this text:  /Users/blanchemiret/Workspace/M2_Info/NLP_Ballier/Projet/nlp_cefr_classification/src/../data/DE-Parsed/1031_0003225_DE_B2.txt.parsed.txt
+       Got getLexFeatures for ONE file in 1.4324359893798828 sec.
+       1071_0248330_DE_B1.txt.parsed.txt
+       Ignoring this text:  /Users/blanchemiret/Workspace/M2_Info/NLP_Ballier/Projet/nlp_cefr_classification/src/../data/DE-Parsed/1071_0248330_DE_B1.txt.parsed.txt
+       ```
+   
+       --> Il s'agit de la fonction `getErrorFeatures`(appelée dans getLexFeatures) qui met autant de temps. C'est le moment où on essaie d'extraire les "error features" donc, voir le `c` des linguistic features dans l'article. Ce qui est donc fait normalement avec le package `language-tool`dont je parle plus haut dans ce doc.
+   
+       On voit bien ici que le temps par document est problématique, et qu'il croît. N'ayant pas d'autre solution, j'ai laissé tourner toute la nuit, c'est ce qui donne ces logs : au bout d'un moment en fait "il" n'essaie même plus, d'aller chercher les errorfeatures : cf tous les `Ignoring this text`. Dans le code c'est un block try catch qui renvoie cette erreur :
+   
+       ```
+       def getErrorFeatures(conllufilepath, lang):
+           numerr = 0
+           numspellerr = 0
+           try:
+               # checker = language_check.LanguageTool(lang)
+               checker = language_tool_python.LanguageTool(lang)
+               text = makeTextOnly(conllufilepath)
+               matches = checker.check(text)
+               for match in matches:
+                   # if not match.locqualityissuetype == "whitespace":
+                   if not match.ruleIssueType == "whitespace":
+                       numerr = numerr +1
+                       # if match.locqualityissuetype == "typographical" or match.locqualityissuetype == "misspelling":
+                       if match.ruleIssueType == "typographical" or match.ruleIssueType == "misspelling":
+                           numspellerr = numspellerr +1
+           except:
+               print("Ignoring this text: ", conllufilepath)
+              # numerr = np.nan
+              # numspellerr = np.nan
+       
+           return [numerr, numspellerr]
+       ```
+   
+       DONC
+   
+       - Si on regarde tous les logs, en gros pour les expériences multilingues, il a extrait les errorfeatures des premiers doc de l'allemand avant d'abandonner (correspond à la stacktrace), sachant qu'il y a + 1000 docs en allemand, j'ai pas compté mais il a dû en traiter environ 100 là 
+       - Pour multilingue italien : zéro error features extraites (il a les autres domain features en revanche à priori)
+       - Pour les expériences cross-lingue, zéro error features extraites
+       - En tchèque, pas de tentative d'extraction d'error features, c'est ce qui est expliqué dans l'article. C'est pour ça que pour ces résultats c'est + proche de ce qui est dans l'article.
+   
+       Ce qu'il aurait été bien de faire :
+   
+       - Essayer d'installer la bonne version du JDK et d'avoir la même version de package qu'eux. Donc c'est un peu de notre faute, mais : 
+   
+       En se remettant du point de vue du projet, qu'est-ce qu'on peut dire ?
+   
+       - Un reproche général qu'on peut faire pour la reproductibilité : il manque un `requirements.txt`au code original, pour indiquer les versions des packages utilisés, afin de retrouver le même environnement d'exécution. Il aurait aussi été bon de parler des ressources machines utilisées pour les expériences, on a peut-être eu un manque de mémoire vive ici. 
