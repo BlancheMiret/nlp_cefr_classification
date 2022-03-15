@@ -1,6 +1,11 @@
 data/*
 !data/README.md
 
+udpipe/*
+Universal Dependencies 2.0 Models for UDPipe (2017-08-01).zip
+Universal Dependencies 2.0 Models for UDPipe (2017-08-01)/*
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
