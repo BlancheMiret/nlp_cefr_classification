@@ -43,12 +43,12 @@ def error_stats(inputpath,lang,output_path):
                 # }
 
                 rule = match.ruleId
+
                 #loc = match.locqualityissuetype ### exist only in package language_check.
                 # locqualityissuetype prend les valeurs comme
                 # whitespace
                 # typographical
                 # misspelling
-
                 loc = match.ruleIssueType
                 # ruleIssueType prend
                 # style

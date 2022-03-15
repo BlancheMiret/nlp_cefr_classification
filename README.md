@@ -151,7 +151,7 @@ $ pip3 install -r requirements.txt
 
          - :ok: 
 
-     - Attention : `model.predict_classes`, function was removed in tensorflow 2.6. had to replace. No package version specified in code.
+     - Attention : `model.predict_classes`, function was removed in tensorflow 2.6. had to replace the function in the code. No package version specified in code.
 
    - Usage : `python3 monolingual_cv.py ../data/DE/`
 
@@ -165,3 +165,17 @@ $ pip3 install -r requirements.txt
 8. multi_lingual_no_langfeat.py
 
    - Notes: :ok: 
+   
+8. `IDEA_POC.PY`
+
+   - Notes:
+   
+     - ```
+       (.env_nlp) blanchemiret@Blanche src (bmi_working_branch) $ python3 IdeaPOC.py 
+       Traceback (most recent call last):
+         File "IdeaPOC.py", line 8, in <module>
+           from sklearn.preprocessing import Imputer #to replace NaN with mean values.
+       ImportError: cannot import name 'Imputer' from 'sklearn.preprocessing' (/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages/sklearn/preprocessing/__init__.py)
+       ```
+   
+       - --> https://stackoverflow.com/questions/59439096/importerror-cannnot-import-name-imputer-from-sklearn-preprocessing, mais ne semble pas utilisé dans le code, toutes les lignes y faisant appel sont commentées
