@@ -3,7 +3,7 @@ cd ..
 ##################################################
 ############ PREPARATION ENVIRONNEMENT ###########
 
-pip3 install -r ../requirements.txt
+pip3 install -r requirements.txt
 
 ############################################
 ############ PREPARATION DONNEES ###########
