@@ -269,7 +269,7 @@ def getLangData(dirpath, option):
     for filename in files:
         if filename.endswith(".txt") and filename != ".parsed.txt":
             if option == "pos":
-            	pos_version_of_file = makePOSsentences(os.path.join(dirpath,filename))
+                pos_version_of_file = makePOSsentences(os.path.join(dirpath,filename))
             elif option == "dep":
                 pos_version_of_file = makeDepRelSentences(os.path.join(dirpath,filename))
             else:
@@ -312,7 +312,7 @@ def train_onelang_classification(train_labels,train_data,labelascat=False, langs
     # Extract ngrams
     vectorizer =  CountVectorizer(analyzer = "word", tokenizer = None, preprocessor = None, stop_words = None, ngram_range=(1,5), min_df=10)
     classifier = RandomForestClassifier(class_weight="balanced", n_estimators=300, random_state=seed)
-    k_fold = StratifiedKFold(10,random_state=seed)
+    k_fold = StratifiedKFold(10,random_state=seed,shuffle=True)
 
     train_vector = vectorizer.fit_transform(train_data).toarray()
 
@@ -333,7 +333,7 @@ def combine_features(train_labels,train_sparse,train_dense):
     Combine features like this: get probability distribution over categories with n-gram features. Use that distribution as a feature set concatenated with the domain features - one way to combine sparse and dense feature groups.
     Just testing this approach here.
     """
-    k_fold = StratifiedKFold(10,random_state=seed)
+    k_fold = StratifiedKFold(10,random_state=seed, shuffle=True)
     vectorizer =  CountVectorizer(analyzer = "word", tokenizer = None, preprocessor = None, stop_words = None, ngram_range=(1,3), min_df=10, max_features = 2000)
     train_vector = vectorizer.fit_transform(train_sparse).toarray()
     classifier = RandomForestClassifier(class_weight="balanced",n_estimators=300,random_state=seed)
@@ -377,7 +377,7 @@ def singleLangClassificationWithoutVectorizer(train_vector,train_labels):
     """
     Single language, 10 fold cv for domain features - i.e., non n-gram features.
     """
-    k_fold = StratifiedKFold(10,random_state=seed)
+    k_fold = StratifiedKFold(10,random_state=seed, shuffle=True)
     classifier = RandomForestClassifier(class_weight="balanced",n_estimators=300,random_state=seed)
 
     cross_val = cross_val_score(classifier, train_vector, train_labels, cv=k_fold, n_jobs=1)
@@ -406,7 +406,7 @@ def crossLangRegressionWithoutVectorizer(train_vector, train_scores, test_vector
     """
     print("CROSS LANG EVAL")
     regressors = [RandomForestRegressor()]
-    k_fold = StratifiedKFold(10,random_state=seed)
+    k_fold = StratifiedKFold(10,random_state=seed, shuffle=True)
     for regressor in regressors:
         cross_val = cross_val_score(regressor, train_vector, train_scores, cv=k_fold, n_jobs=1)
         predicted = cross_val_predict(regressor, train_vector, train_scores, cv=k_fold)

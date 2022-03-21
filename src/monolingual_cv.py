@@ -199,7 +199,7 @@ print('y_train shape:', y_train.shape) # 6 classes
 print(time.time() - pt)
 
 cv_accs, cv_f1 = [], [] # cv_accs not used
-k_fold = StratifiedKFold(10, random_state=seed)
+k_fold = StratifiedKFold(10, random_state=seed, shuffle=True)
 all_gold = []
 all_preds = []
 i = 1

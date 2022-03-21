@@ -161,7 +161,7 @@ y_train = np_utils.to_categorical(np.array(y_labels), len(unique_labels))
 lng_train = np_utils.to_categorical(np.array(y_lang_labels), len(lang_labels))
 
 cv_accs, cv_f1 = [], []
-k_fold = StratifiedKFold(10,random_state=seed)
+k_fold = StratifiedKFold(10,random_state=seed, shuffle=True)
 n_iter = 1
 all_golds = []
 all_preds = []
