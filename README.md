@@ -32,6 +32,18 @@ $ docker build --no-cache -t docker_image .
 ## Run Docker Image
 
 ```bash
-$ docker run -ti --rm --name='docker_image' docker_test:latest
+$ docker run -ti --rm --name='docker_image' docker_image:latest
+```
+
+## Export Docker Image
+
+```bash
+$ docker save docker_image:latest > docker_image.tar
+```
+
+## Load Docker Image Archive
+
+```bash
+$ docker load < docker_image.tar
 ```
 
