@@ -22,3 +22,16 @@ $ cd src
 $ ./run_all_experiments.sh
 ```
 
+## Build Docker Image
+
+```bash
+$ export DOCKER_BUILDKIT=0    
+$ docker build --no-cache -t docker_image .
+```
+
+## Run Docker Image
+
+```bash
+$ docker run -ti --rm --name='docker_image' docker_test:latest
+```
+
