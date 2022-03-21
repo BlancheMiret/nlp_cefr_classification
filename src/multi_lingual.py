@@ -17,6 +17,11 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import f1_score, confusion_matrix
 from keras.layers import SpatialDropout1D
 
+def warn(*args, **kwargs):
+    pass
+import warnings
+warnings.warn = warn
+
 seed = 1234
 _white_spaces = re.compile(r"\s\s+")
 maxlen = 2000
@@ -31,8 +36,6 @@ mincharfreq = 0
 maxwordlen = 400
 
 tokenizer_re = re.compile("\w+|\S")
-
-data_path = "../data"
 
 def read_data():
     """
@@ -125,37 +128,25 @@ def transform(D, vocab, minfreq, tokenizer="char"):
 # Read all plain files from 3 languages
 print("Reading the training set... ", end="")
 sys.stdout.flush()
-pt = time.time()
 doc_train, y_labels, y_lang_labels = read_data()
-print(time.time() - pt)
 
 # Get vocab & encode training set
 # at char & word levels
 print("Transforming the datasets... ", end="")
 sys.stdout.flush()
-pt = time.time()
 word_vocab, max_word_features = getWords(doc_train)
 char_vocab, max_char_features = getChars(doc_train)
 print("Number of word features= ", max_word_features, " char features= ", max_char_features) # 2245 & 159
 x_char_train = transform(doc_train, char_vocab, mincharfreq, tokenizer="char")
 x_word_train = transform(doc_train, word_vocab, minwordfreq, tokenizer="word")
 print(len(x_char_train), 'train sequences') # 2 267
-print(time.time() - pt)
 
 # Pad sequences with keras built-in function
 # By default adds 0s at the BEGINNING of sequences
-print('Pad sequences (samples x time)')
 x_char_train = sequence.pad_sequences(x_char_train, maxlen=maxlen) #2000
 x_word_train = sequence.pad_sequences(x_word_train, maxlen=maxwordlen) # 400
-print('x_char_train shape:', x_char_train.shape) #  (2267, 2000)
-print('x_word_train shape', x_word_train.shape) # (2267, 400)
-# x_char_train[0]
-# [ 0  0  0 ...  4 47  7]
 
 # Encode labels
-print("Transforming the labels... ", end="")
-sys.stdout.flush()
-pt = time.time()
 unique_labels = list(set(y_labels))
 lang_labels = ["CZ", "IT", "DE"]
 print("Class labels = ",unique_labels)
@@ -168,19 +159,9 @@ y_lang_labels = [lang_labels.index(y) for y in y_lang_labels] # list 2267 of val
 
 y_train = np_utils.to_categorical(np.array(y_labels), len(unique_labels))
 lng_train = np_utils.to_categorical(np.array(y_lang_labels), len(lang_labels))
-# lng_train
-# [[0. 1. 0.]
-#  [0. 1. 0.]
-#  [0. 1. 0.]
-#  ...
-#  [0. 0. 1.]
-#  [0. 0. 1.]
-#  [0. 0. 1.]]
-
-print(time.time() - pt)
 
 cv_accs, cv_f1 = [], []
-k_fold = StratifiedKFold(10,random_state=seed)
+k_fold = StratifiedKFold(10,random_state=seed, shuffle=True)
 n_iter = 1
 all_golds = []
 all_preds = []
@@ -195,39 +176,21 @@ for train, test in k_fold.split(x_word_train, y_labels):
     wordx = Embedding(max_word_features, 32, input_length=maxwordlen)(word_input)
     wordx = SpatialDropout1D(0.25)(wordx)
 
-    #charx = Convolution1D(nb_filter=128, filter_length=9, activation="relu")(charx)
-    #charx = MaxPooling1D(pool_length=maxlen-6)(charx)#Or Max-pooling
-    #charx = GRU(embedding_dims, dropout_W=0.2, dropout_U=0.2, return_sequences=True)(charx)
-    #charx = AveragePooling1D(pool_length=maxlen)(charx)
     charx = Flatten()(charx)
-    #charx = Dense(160, activation="relu")(charx)
-    #charx = Dropout(0.25)(charx)
-
-    #wordx = Convolution1D(nb_filter=128, filter_length=2)(wordx)
-    #wordx = Convolution1D(nb_filter=256, filter_length=2, activation="relu")(wordx)
-    #wordx = GRU(128, dropout_W=0.25, dropout_U=0.25, return_sequences=True)(wordx)
-    #wordx = AveragePooling1D(pool_length=maxwordlen)(wordx)#Or Max-pooling
-    #wordx = MaxPooling1D(pool_length=2)(wordx)#Or Max-pooling
-    #wordx1 = LSTM(32)(wordx)
-    #wordx2 = LSTM(32, go_backwards=True)(wordx)
-    #wordx = AveragePooling1D(pool_length=4)(wordx)#Or Max-pooling
     wordx = Flatten()(wordx)
-    #wordx = Dense(256, activation="relu")(wordx)
-    #wordx = Dropout(0.25)(wordx)
 
     y = concatenate([charx, wordx])
-    grp_predictions = Dense(n_grp_classes, activation='softmax')(y) ################# <- prédit d'abord la langue, parmi 3
-    #grp_predictions1 = Dense(32, activation='relu')(grp_predictions)
-    y = concatenate([y, grp_predictions])
-    #y = Dense(20, activation="relu")(y)
 
-    #y = Dense(50, activation='relu', name='hidden_layer')(y)
+    # predict language first
+    grp_predictions = Dense(n_grp_classes, activation='softmax')(y)
+
+    # then predict class after adding language info to input tensor
+    y = concatenate([y, grp_predictions])
     y = Dropout(0.25)(y)
-    y_predictions = Dense(n_classes, activation='softmax')(y) ######################## <- prédit ensuite la classe, parmi 5
+    y_predictions = Dense(n_classes, activation='softmax')(y)
 
     model = Model(inputs=[char_input, word_input], outputs=[y_predictions, grp_predictions])
 
-    model.summary()
     model.compile(loss='categorical_crossentropy',
               optimizer='adadelta',
               metrics=['accuracy'], loss_weights=[1.0, 0.5])
@@ -237,10 +200,8 @@ for train, test in k_fold.split(x_word_train, y_labels):
               epochs=nb_epoch)
 
     y_pred = model.predict([x_char_train[test], x_word_train[test]])
-    print(y_pred[0].shape, y_pred[1].shape, sep="\n")
     y_classes = np.argmax(y_pred[0], axis=1)
     y_gold = np.array(y_labels)[test]
-    print(y_classes.shape, y_gold.shape)
 
     # Transform id predict to class str
     pred_labels = [unique_labels[x] for x in y_classes]
@@ -248,10 +209,9 @@ for train, test in k_fold.split(x_word_train, y_labels):
     all_golds.extend(gold_labels)
     all_preds.extend(pred_labels)
     cv_f1.append(f1_score(y_gold, y_classes, average="weighted"))
-    print(confusion_matrix(gold_labels, pred_labels, labels=unique_labels))
-    # print("All done!\n{}".format(hist.history), file=sys.stderr)
     n_iter += 1
+    print()
 
-print("\nF1-scores", cv_f1,sep="\n")
+print(f"\nAll F1-scores for {n_iter} models:", cv_f1,sep="\n")
 print("Average F1 scores", np.mean(cv_f1))
 print(confusion_matrix(all_golds,all_preds))

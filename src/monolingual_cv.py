@@ -2,7 +2,7 @@
 
 from __future__ import print_function
 import numpy as np
-np.random.seed(1337)  # for reproducibility
+np.random.seed(1337)
 
 from keras.preprocessing import sequence
 from keras.models import Sequential, Model
@@ -13,10 +13,14 @@ from keras.utils import np_utils
 import sys, time, re, glob
 from collections import defaultdict
 from gensim.utils import simple_preprocess
-# Gensim is a free open-source Python library for representing documents as semantic vectors, as efficiently (computer-wise) and painlessly (human-wise) as possible.
 
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import f1_score, confusion_matrix
+
+def warn(*args, **kwargs):
+    pass
+import warnings
+warnings.warn = warn
 
 _white_spaces = re.compile(r"\s\s+")
 
@@ -24,11 +28,8 @@ maxchars = 200
 embedding_dims = 100
 batch_size = 32
 nb_epoch = 10
-# nb_filter = 128
-# filter_length = 5
-# pool_length = 32
 minfreq = 0
-data_path = sys.argv[1] # 2nd command line argument. Plain text here.
+data_path = sys.argv[1]
 minwordfreq = 15
 maxwordlen = 400
 seed = 1234
@@ -146,11 +147,12 @@ def transform(D, vocab, minfreq, tokenizer="char"):
         # For each token, get nb_occ
         for c in z:
             freq = vocab[c]
-            if c in vocab: # should always be?
-                if c in features: # only if nb_occ sufficient
+            if c in vocab:
+                # Tokens in features are the one with sufficient frequency
+                if c in features:
                     x.append(features[c]+index_from)
                 else:
-                    x.append(oov_char) # out of vocabulary. ID is 2
+                    x.append(oov_char)
             else:
                 continue
         X.append(x)
@@ -180,25 +182,6 @@ print(time.time() - pt)
 # By default adds 0s at the BEGINNING of sequences
 print('Pad sequences (samples x time)')
 x_word_train = sequence.pad_sequences(x_word_train, maxlen=maxwordlen)
-print('x_train shape:', x_word_train.shape)
-# x_word_train[0]:
-# [ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-#   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-#   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-#   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-#   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-#   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-#   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-#   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-#   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-#   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-#   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-#   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-#   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-#   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  3  4  5  6  7
-#   8  9 10 11  2 12 13  9 14 15 16  2 17  9 18 19 20 21 22 23 24  9 18 25
-#  20 21  2 26 27 28 29 30 31 28 32 33  9 34 28 35 36 37 38 39 40 41 42 33
-#  43 42 44 45 46 47  9 48 49 50 33 28 51 52 53 54]
 
 # Encode labels
 print("Transforming the labels... ", end="")
@@ -211,29 +194,19 @@ indim = x_word_train.shape[1] # 400 here
 y_labels = [unique_labels.index(y) for y in y_labels]
 
 # to_categorical: Converts a class vector (integers) to binary class matrix.
-# [5, 4, 3, ..., 5, 3, 4]
-# becomes
-# [[0. 0. 0. 0. 0. 1.]
-#  [0. 0. 0. 0. 1. 0.]
-#  [0. 0. 0. 1. 0. 0.]
-#  ...
-#  [0. 0. 0. 0. 0. 1.]
-#  [0. 0. 0. 1. 0. 0.]
-#  [0. 0. 0. 0. 1. 0.]]
 y_train = np_utils.to_categorical(np.array(y_labels), len(unique_labels))
 print('y_train shape:', y_train.shape) # 6 classes
 print(time.time() - pt)
 
 cv_accs, cv_f1 = [], [] # cv_accs not used
-k_fold = StratifiedKFold(10, random_state=seed)
+k_fold = StratifiedKFold(10, random_state=seed, shuffle=True)
 all_gold = []
 all_preds = []
+i = 1
 for train, test in k_fold.split(x_word_train, y_labels):
-    # train, test are indexes
-    pt = time.time()
 
-    #print("TRAIN:", train, "TEST:", test)
-    print('Build model...')
+    pt = time.time()
+    print(f'Build model num {i}...')
 
     model = Sequential()
 
@@ -253,8 +226,6 @@ for train, test in k_fold.split(x_word_train, y_labels):
     # n_classes = units = nb out neurons
     model.add(Dense(n_classes, activation='softmax'))
 
-    model.summary()
-
     model.compile(loss='categorical_crossentropy',
                 optimizer='adadelta',
                 metrics=['accuracy'])
@@ -263,21 +234,19 @@ for train, test in k_fold.split(x_word_train, y_labels):
               batch_size=batch_size,
               epochs=nb_epoch)
 
-    # y_pred = model.predict_classes(x_word_train[test]) ############################## REMOVED IN TENSORFLOW 2.6
     predict_x=model.predict(x_word_train[test])
     y_pred=np.argmax(predict_x,axis=1)
-    #print(y_pred, np.array(y_labels)[test], sep="\n")
 
     pred_labels = [unique_labels[x] for x in y_pred]
     gold_labels = [unique_labels[x] for x in np.array(y_labels)[test]]
-    all_gold.extend(gold_labels) # only list concatenation
+    all_gold.extend(gold_labels)
     all_preds.extend(pred_labels)
 
     cv_f1.append(f1_score(np.array(y_labels)[test], y_pred, average="weighted"))
-    print(confusion_matrix(gold_labels, pred_labels, labels=unique_labels))
-    print(time.time() - pt)
     print()
 
-print("\nF1-scores", cv_f1,sep="\n")
+    i += 1
+
+print(f"\nAll F1-scores of the {i} models:", cv_f1,sep="\n")
 print("Average F1 scores", np.mean(cv_f1))
 print(confusion_matrix(all_gold,all_preds))
