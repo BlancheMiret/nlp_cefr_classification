@@ -1,3 +1,6 @@
 language-tool-python
 keras
 gensim
+tensorflow
+sklearn
+numpy
