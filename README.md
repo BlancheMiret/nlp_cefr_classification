@@ -12,7 +12,7 @@ Project was made by:
 
 **Option 1**: download the image and load it
 
-- Download the image docker [here]() and place it at the root of this project
+- Download the image docker [here](https://www.swisstransfer.com/d/f2a85654-ece2-46b9-891f-92a9f38c9b67) and place it at the root of this project
 - Execute:
 ```bash
 $ docker load < docker_image.tar
