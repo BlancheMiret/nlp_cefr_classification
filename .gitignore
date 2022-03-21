@@ -138,3 +138,7 @@ dmypy.json
 
 # Docker run 
 build_run_image_dev.sh
+docker_image.tar
+
+# Mac OSX
+.DS_Store
