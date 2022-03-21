@@ -25,6 +25,7 @@ $ ./run_all_experiments.sh
 ## Build Docker Image
 
 ```bash
+$ cd '<chemin source projet>'
 $ export DOCKER_BUILDKIT=0    
 $ docker build --no-cache -t docker_image .
 ```
