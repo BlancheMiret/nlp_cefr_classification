@@ -79,7 +79,7 @@ do
             multi_lingual_no_langfeat
             ;;
         "Option 2 : Experiments without neural network")
-            IdeaPOC
+            IdeaPOC 
             ;;
         "Option 3 : Monolingual neural network experiments")
             monolingual_cv
